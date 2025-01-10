@@ -3,7 +3,9 @@ import java.util.Scanner;
 public class JungleRPG {
 
     public static void tutorialLevel(Character player){
-
+        //TODO: add a tutorial level here
+        //30 health enemy, drops 10 gold and a healing potion
+        System.out.println("Just before entering the jungle, you encounter a small evil creature with jelly arms and beady eyes.");
     }
 
     public static void outputIntro(){
