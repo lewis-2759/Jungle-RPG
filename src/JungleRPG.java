@@ -3,16 +3,70 @@ import java.util.Scanner;
 
 public class JungleRPG {
 
-    public static int roll(Character player){
-        //TODO: do this
-        return 0;
+
+    public static void potionDropped(Character player){
+        Random random = new Random();
+        if(random.nextInt(100) < 20){
+            player.getPotion();
+            System.out.println("You notice a health potion on the ground!");
+        }
     }
+   
+   
+    public static Enemy createEnemy(Character player, Ability[] enemyAbilities, String[] enemyNames){
+        Random random = new Random();
+        int enemyLevel = random.nextInt(-2, 2);
+        enemyLevel += player.getLevel();
+        int enemyName = random.nextInt(enemyNames.length);
+        int enemyAbilityOne = random.nextInt(enemyAbilities.length);
+        int enemyAbilityTwo = random.nextInt(enemyAbilities.length);
+        int randomHealthModifier = random.nextInt(-10,10) + 1;
+        int enemyHealth = player.getMaxHealth() + randomHealthModifier;
+        return new Enemy(enemyNames[enemyName], enemyAbilities[enemyAbilityOne], enemyAbilities[enemyAbilityTwo], enemyHealth, enemyLevel);
+    }
+   
+   
+    public static boolean encounterEnemy(Character player){
+        Random random = new Random();
+        if(random.nextInt(100) < 33){
+            System.out.println("You have encountered an enemy!");
+            return true;
+        }
+        int luck = player.getLuck();
+        for(int i = 0; i < luck; i++){
+            if(random.nextInt(100) == 37){
+                System.out.println("Enemy avoided due to luck!");
+                return false;
+            }
+        }
+        System.out.println("There are no enemies around currently ...");
+        
+        return false;
+    }
+
+
+    public static int roll(Character player){
+        int luck = player.getLuck();
+        int luckSteps = 0;
+        Random random = new Random();
+        int steps = random.nextInt(10) + 1;
+        for(int i =0 ; i< luck; i++){
+            if(random.nextInt(100) < 20){
+                luckSteps++;
+            }
+        }
+        steps += luckSteps;
+        return steps;
+    }
+    
+    
     public static void printModifier(int modifier){
         String [] modifierNames = {"No Modifier", "Slow", "Stun", "Freeze", "Burn", "Bleed", "Poison", "Trap", "Slow", "Fear", "Curse"};
         System.out.println("Modifier: " + modifierNames[modifier]);
     }
 
-    public static void takeTurn(Character player, Enemy enemy, Scanner scanner){
+    
+    public static int takeTurn(Character player, Enemy enemy, Scanner scanner){
         System.out.println("It is your turn to attack.");
         System.out.println("The enemy has " + enemy.getHealth() + " health remaining.");
         int level = player.getLevel();
@@ -56,7 +110,10 @@ public class JungleRPG {
         System.out.println("The enemy now has " + enemy.getHealth() + " health remaining.");
         System.out.println("---------------------------------------------");
 
+        return damageDealt;
+
     }
+
 
     public static void tutorialLevel(Character player){
         //30 health enemy, drops 10 gold and a healing potion
@@ -64,7 +121,21 @@ public class JungleRPG {
         System.out.println("Just before entering the jungle, you encounter a small evil creature with bone-thin arms, no skin, and beady eyes.");
         System.out.println("It looks at you, eyeing your possessions, and you know it is time to fight.");
         System.out.println("---------------------------------------------");
+        scanner.nextLine();
         Enemy tutorialEnemy = new Enemy("Skinless Creature", new Ability("Bite", 9, 0), new Ability("Claw", 8, 5), 30, 1);
+
+        System.out.println("Combat is turn based. Every fight, you will go first.");
+        System.out.println("You will have a choice of abilities to use, each with a different effect and damage.");
+        System.out.println("The enemy will then attack you with one of its abilities.");
+        System.out.println("The fight will continue until one of you has fallen.");
+        System.out.println("---------------------------------------------");
+        scanner.nextLine();
+        System.out.println("Enemies will drop gold and potentially items when defeated.");
+        System.out.println("You will also gain experience for defeating enemies.");
+        System.out.println("When you have enough experience, you will level up and gain a skill point.");
+        System.out.println("You can use skill points to increase your attributes.");
+        System.out.println("---------------------------------------------");
+        scanner.nextLine();
 
         while(tutorialEnemy.isAlive()){
            
@@ -93,13 +164,14 @@ public class JungleRPG {
         System.out.println("Health potions can be used to restore 25% of your health.");
         System.out.println("You have also gained 25 experience.");
         System.out.println("You still need 75 experience to level up.");
-        System.out.println("---------------------------------------------");
+        scanner.nextLine();
         player.findGold(10);
         player.getPotion();
         player.gainExperience(25);
 
 
     }
+
 
     public static void outputIntro(){
         System.out.println("You are on a mission to enter the dangerous jungle of Janguquisha.");
@@ -109,6 +181,7 @@ public class JungleRPG {
         System.out.println("Good luck ...");
         System.out.println("---------------------------------------------");
     }
+
 
     public static Character createCharacter() {
         //ADD INPUT VALIDATION FOR INT PARSING 
@@ -158,6 +231,8 @@ public class JungleRPG {
         System.out.println("You are given 25 skill points to spend.");
         System.out.println("You can put up to 10 skill points in each attribute, or none at all.");
         System.out.println("---------------------------------------------");
+        scanner.nextLine();
+        System.out.println("Attributes: ");
         System.out.println("Strength: Melee damage, health and defense.");
         System.out.println("Dexterity: Ranged attacks and dodging.");
         System.out.println("Intellect: Spell power and experience rate.");
@@ -167,7 +242,8 @@ public class JungleRPG {
 
         String [] statNames = {"Strength", "Dexterity", "Intellect", "Luck"};
         System.out.println("---------------------------------------------");
-
+        scanner.nextLine();
+    
         for(int i = 0; i < stats.length; i++){
 
             if(statsRemaining > 0){
@@ -230,6 +306,7 @@ public class JungleRPG {
         Character player =  new Character(name, classChosen, stats);
         return player;
     }
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         //once level 15, it is always 5000
@@ -247,10 +324,15 @@ public class JungleRPG {
 
         //explain the game here better
         System.out.println("Welcome to Jungle RPG!");
+        System.out.println("This is a turn based combat RPG style survival game.");
+        System.out.println("Hit enter in order to continue whenever the text is paused.");
+        System.out.println("---------------------------------------------");
+        scanner.nextLine();
 
         Character player = createCharacter();
 
         outputIntro();
+        scanner.nextLine();
 
         System.out.println("Would you like to begin the tutorial level? (y/n)");
         String tutorial = scanner.nextLine();
@@ -263,13 +345,15 @@ public class JungleRPG {
             enemiesKilled = 1;
             goldCollected = 10;
             totalDamageDealt = 30;
-
+            System.out.println("---------------------------------------------");
+            scanner.nextLine();
             System.out.println("After defeating the Skinless Creature, a wild wizard passes you by.");
             System.out.println("He looks at you and says, 'You have potential, but you are not ready for the jungle.'");
             System.out.println("He waves his hand and you are transported to the entrance of the jungle.");
             System.out.println("You have been given a second chance, as he heals your wounds and gives you a small bag of 20 gold.");
             System.out.println("He wishes you luck and disappears in a flash.");
             System.out.println("---------------------------------------------");
+            scanner.nextLine();
             goldCollected += 20;
             player.findGold(20);
         }
@@ -279,27 +363,111 @@ public class JungleRPG {
         System.out.println("At any moment one might appear.");
         System.out.println("You wonder if you will ever see the light of day again ...");
         System.out.println("---------------------------------------------");
+        scanner.nextLine();
 
         //main gameplay loop - we travel a certain distance (random roll based on luck)
+        Enemy currentEnemy;
         while(player.isAlive()){
            int steps =  roll(player);
            stepsWalked += steps;
+           System.out.println("You walk " + steps + " steps.");
+           System.out.println("---------------------------------------------");
+           scanner.nextLine();
            //fix this
-            boolean isEnemy = false;
-            if(isEnemy == true){
-                //we encounter a monster
-                //combat loop
-                //if we survive, give exp, if level up, give attribute points and maybe skill
-                //roll for a healing potion or gold
-                //gain exp from walking and killing monsters
-                //every level up, give 1 skill point, at level 5, 10 , 20, 30 - a new ability
+            if(encounterEnemy(player)){
+               currentEnemy =  createEnemy(player, enemyAbilities, enemyNames);
+                System.out.println("You have encountered a " + currentEnemy.getName() + "!");
+                System.out.println("Prepare to fight!");
+                System.out.println("---------------------------------------------");
+                scanner.nextLine();
+                while(player.isAlive() && currentEnemy.isAlive()){
+                    totalDamageDealt += takeTurn(player, currentEnemy, scanner);
+                    if(currentEnemy.isAlive()){
+                    System.out.println("Now it is time for the " + currentEnemy.getName() + " to attack.");
+                    Ability enemyAbility = currentEnemy.getAbility();
+                    Random random = new Random();
+                    int baseDamage = enemyAbility.getDamage();
+                    int variance = (int) (baseDamage * 0.2);
+                    int damageDealt = baseDamage + random.nextInt(2 * variance + 1) - variance;
+
+                    System.out.println("The " + currentEnemy.getName() + " uses " + enemyAbility.getName() + "!");
+                    System.out.println("It deals " + damageDealt + " damage!");
+                    player.takeDamage(damageDealt);
+                    System.out.println("You have " + player.getHealth() + " health remaining.");
+                    System.out.println("---------------------------------------------");
+                    scanner.nextLine();
+                    }
+                }
+
+                if(player.isAlive()){
+                    System.out.println("You have defeated the " + currentEnemy.getName() + "!");
+                    Random random = new Random();
+                    int goldModifier = random.nextInt(0, 10) + 1;
+                    int experienceModifier = random.nextInt(-10, 10) + 1;
+                    int goldDropped = (currentEnemy.getLevel() * 3 / 2 + goldModifier ) / 2;
+                    if(goldDropped < 0){
+                        goldDropped += 10;
+                    }
+                    int expGained = currentEnemy.getLevel() * 20 + experienceModifier;
+                    if(expGained <= 0 ){
+                        expGained += 10;
+                    }
+                    player.gainExperience(expGained);
+                    int expNeeded;
+                    if(player.getLevel()>14){
+                        expNeeded = MAX_EXP_15 - player.getExperience();
+                    }
+                    else {
+                        expNeeded = EXP_TO_NEXT_LEVEL[player.getLevel()] - player.getExperience();
+                    }
+                    System.out.println("You have gained " + goldDropped + " gold.");
+                    potionDropped(player);
+                    System.out.println("You have also gained " + expGained + " experience.");
+                    if(expNeeded > 0){
+                    System.out.println("You still need " + expNeeded + " experience to level up.");
+                    } else {
+                        int skillChoice = -1;
+                        while(skillChoice < 1 || skillChoice > 4){
+                            System.out.println("You have leveled up! Choose a skill to increase: ");
+                            System.out.println("1. Strength");
+                            System.out.println("2. Dexterity");
+                            System.out.println("3. Intellect");
+                            System.out.println("4. Luck");
+                            System.out.print("Choose a skill: ");
+                            skillChoice = scanner.nextInt();
+                            if(skillChoice < 1 || skillChoice > 4){
+                                System.out.println("Please enter a valid skill number 1-4.");
+                            }
+                        }
+                        player.levelUp(skillChoice);
+                        System.out.println("---------------------------------------------");
+                        System.out.println("You have leveled up! You are now level " + player.getLevel() + "!");
+                        System.out.println("You have gained 10 health and are now at " + player.getHealth() + " health.");
+                        System.out.println("Your current skill points are now: ");
+                        System.out.println("Strength: " + player.getStrength());
+                        System.out.println("Dexterity: " + player.getDexterity());
+                        System.out.println("Intellect: " + player.getIntellect());
+                        System.out.println("Luck: " + player.getLuck());
+
+                        if(player.getLevel() == 5 || player.getLevel() == 10 || player.getLevel() == 15 || player.getLevel() == 20 || player.getLevel() == 30){
+                            System.out.println("You have unlocked a new ability!");
+                        }
+                    }
+                    System.out.println("---------------------------------------------");
+                    scanner.nextLine();
+                    goldCollected += goldDropped;
+                    player.findGold(goldDropped);
+                    enemiesKilled++;
+                    totalDamageDealt += currentEnemy.getMaxHealth();
+                }
             }
         }
 
-
-        scanner.close();
+        scanner.nextLine();
         System.out.println("---------------------------------------------");
         System.out.println("You have died in the jungle, as all eventually do.");
+        System.out.println("---------------------------------------------");
+        scanner.nextLine();
         System.out.println("You walked " + stepsWalked + " steps.");
         if(enemiesKilled == 1){
             System.out.println("You killed " + enemiesKilled + " enemy.");
@@ -311,7 +479,7 @@ public class JungleRPG {
         System.out.println("Thank you for playing Jungle RPG!");
         System.out.println("---------------------------------------------");
 
-
+        scanner.close();
 
     }
 }

@@ -3,6 +3,7 @@ public class Enemy {
     private Ability two;
     private String name;
     private int health;
+    private int maxHealth;
     private int level;
 
     public Enemy(String name, Ability one, Ability two, int health, int level) {
@@ -10,6 +11,7 @@ public class Enemy {
         this.one = one;
         this.two = two;
         this.health = health;
+        this.maxHealth = health;
         this.level = level;
     }
 
@@ -27,6 +29,11 @@ public class Enemy {
     public int getHealth() {
         return this.health;
     }
+
+    public int getMaxHealth() {
+        return this.health;
+    }
+
 
     public String getName() {
         return this.name;

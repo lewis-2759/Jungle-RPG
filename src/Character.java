@@ -47,6 +47,10 @@ public class Character {
         return this.health;
     }
 
+    public int getMaxHealth() {
+        return this.maxHealth;
+    }
+
     public String getName() {
         return this.name;
     }
