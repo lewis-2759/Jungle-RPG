@@ -12,6 +12,6 @@ public class Warlock extends GameClass{
              abilityList[1] = new Ability("Dark Omen", 20, 10); //dark omen will curse
              abilityList[2] = new Ability("Demonic Prayer", 30, 0);  
              abilityList[3] = new Ability("Unleash Demon", 45, 9);  //unleash demon will fear
-             abilityList[3] = new Ability("Obliterate", 75, 0);
+             abilityList[4] = new Ability("Obliterate", 75, 0);
        }
 }

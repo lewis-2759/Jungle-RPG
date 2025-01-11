@@ -2,6 +2,7 @@
 
 public class Character {
     private int health;
+    private int maxHealth;
     GameClass characterClass;
     private int strength;   //melee damage, health, defense
     private int dexterity;  //ranged attacks and dodging
@@ -10,12 +11,14 @@ public class Character {
     private int level;
     private int experience;
     private int gold;
+    private int healthPotions;
     private final String name;
 
-    public Character(String name, GameClass characterClass, int stats[]) {
+
+    public Character(String name, GameClass characterClassChosen, int stats[]) {
         this.name = name;
-        this.health = 300; //default health is 300
-        this.characterClass = characterClass;
+        this.health = 30; //default health is 100
+        this.maxHealth = 30;
 
         this.strength = stats[0];
         this.dexterity = stats[1];
@@ -25,6 +28,8 @@ public class Character {
         this.level = 1;
         this.experience = 0;
         this.gold = 0;
+        this.healthPotions = 0;
+        this.characterClass = characterClassChosen;
     }
 
     public void takeDamage(int damage) {
@@ -73,11 +78,53 @@ public class Character {
     public int getExperience() {
         return this.experience;
     }
+
+    public void gainExperience(int exp) {
+        this.experience += exp;
+    }
+
     public int getGold(){
         return this.gold;
     }
 
     public void findGold(int gold){
         this.gold += gold;
+    }
+
+    public void getPotion(){
+        this.healthPotions++;
+    }
+
+    public void usePotion(){
+        if(this.healthPotions > 0){
+            this.health += this.health * 0.25;
+            this.healthPotions--;
+        }
+        if(this.health > this.maxHealth){
+            this.health = this.maxHealth;
+        }
+    }
+
+    public void levelUp(int skillChoice){   //0 = strength, 1 = dexterity, 2 = intellect, 3 = luck
+        this.level++;
+        this.experience = 0;
+        this.maxHealth += 10;
+        this.health = this.maxHealth;
+        switch(skillChoice){
+            case 0:
+                this.strength += 1;
+                break;
+            case 1:
+                this.dexterity += 1;
+                break;
+            case 2:
+                this.intellect += 1;
+                break;
+            case 3:
+                this.luck += 1;
+                break;
+            default:
+                System.out.println("Invalid skill choice"); //this should never happen
+        }
     }
 }

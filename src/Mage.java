@@ -13,6 +13,6 @@ public class Mage extends GameClass{
              abilityList[1] = new Ability("Mana Burn", 20, 0);
              abilityList[2] = new Ability("Frostbolt", 30, 3);   //Frostbolt will freeze
              abilityList[3] = new Ability("Fireblast", 50, 4);   //fireblast will burn
-             abilityList[3] = new Ability("Blizzard", 60, 3);   //blizzard will freeze
+             abilityList[4] = new Ability("Blizzard", 60, 3);   //blizzard will freeze
        }
 }

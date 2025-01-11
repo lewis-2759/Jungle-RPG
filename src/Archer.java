@@ -12,6 +12,6 @@ public class Archer extends GameClass{
              abilityList[1] = new Ability("Trap", 20, 7);   //this will trap
              abilityList[2] = new Ability("Poisoned arrow", 23, 6);   //poisoned arrow will poison
              abilityList[3] = new Ability("Viper's Sting", 50, 7);   //this will slow
-             abilityList[3] = new Ability("Thrill of the Hunt", 83, 0); 
+             abilityList[4] = new Ability("Thrill of the Hunt", 83, 0); 
        }
 }

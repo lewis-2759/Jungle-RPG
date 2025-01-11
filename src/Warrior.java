@@ -13,6 +13,6 @@ public class Warrior extends GameClass{
          abilityList[1] = new Ability("Whack", 20, 0);
          abilityList[2] = new Ability("Shield Slam", 30, 2);   //shield slam will stun
          abilityList[3] = new Ability("Maul", 50, 1);   //maul will slow
-         abilityList[3] = new Ability("Devastate", 70, 0);
+         abilityList[4] = new Ability("Devastate", 70, 0);
    }
 }
