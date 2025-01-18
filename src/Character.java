@@ -47,6 +47,10 @@ public class Character {
         return this.health;
     }
 
+    public void setHealth(int health){
+        this.health = health;
+    }
+
     public int getMaxHealth() {
         return this.maxHealth;
     }

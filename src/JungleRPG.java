@@ -356,6 +356,7 @@ public class JungleRPG {
             scanner.nextLine();
             goldCollected += 20;
             player.findGold(20);
+            player.setHealth(player.getMaxHealth());
         }
 
         System.out.println("As you slowly creep into the dark jungle, many sounds fill your ears.");
