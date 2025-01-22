@@ -103,14 +103,20 @@ public class Character {
         this.healthPotions++;
     }
 
+    public boolean hasPotion(){
+        return this.healthPotions > 0;
+    }
+
     public void usePotion(){
+        int healthGained = (int)(this.maxHealth * 0.5);
         if(this.healthPotions > 0){
-            this.health += this.health * 0.25;
+            this.health += healthGained;
             this.healthPotions--;
         }
         if(this.health > this.maxHealth){
             this.health = this.maxHealth;
         }
+        System.out.println("You used a health potion and gained " + healthGained + " health");
     }
 
     public void levelUp(int skillChoice){   //0 = strength, 1 = dexterity, 2 = intellect, 3 = luck

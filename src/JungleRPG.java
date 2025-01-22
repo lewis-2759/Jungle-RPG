@@ -3,6 +3,14 @@ import java.util.Scanner;
 
 public class JungleRPG {
 
+    public static Integer parseIntOrNull(String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
 
     public static void potionDropped(Character player){
         Random random = new Random();
@@ -15,7 +23,7 @@ public class JungleRPG {
    
     public static Enemy createEnemy(Character player, Ability[] enemyAbilities, String[] enemyNames){
         Random random = new Random();
-        int enemyLevel = random.nextInt(-2, 2);
+        int enemyLevel = random.nextInt(0, 2);
         enemyLevel += player.getLevel();
         int enemyName = random.nextInt(enemyNames.length);
         int enemyAbilityOne = random.nextInt(enemyAbilities.length);
@@ -65,22 +73,28 @@ public class JungleRPG {
         System.out.println("Modifier: " + modifierNames[modifier]);
     }
 
+
     
     public static int takeTurn(Character player, Enemy enemy, Scanner scanner){
         System.out.println("It is your turn to attack.");
+        System.out.println("You have " + player.getHealth() + " health remaining.");
         System.out.println("The enemy has " + enemy.getHealth() + " health remaining.");
+        if(enemy.isAfflicted()){
+            System.out.println("The enemy is affected by " + enemy.getModifier() + "!");
+            System.out.println("The enemy is affected for " + enemy.getModifierTurns() + " more turns.");
+        }
         int level = player.getLevel();
-        int abilityCount =0;
-        if(level >= 30){
+        int abilityCount = 1;
+        if(level >= 20){
             abilityCount = 5;
         }
-        else if(level > 20){
+        else if(level >= 10){
             abilityCount = 4;
         }
-        else if(level > 10){
+        else if(level >= 5){
             abilityCount = 3;
         }
-        else if(level > 5){
+        else if(level >= 2){
             abilityCount = 2;
         }
         else {
@@ -89,6 +103,9 @@ public class JungleRPG {
 
         System.out.println("You may choose from the following abilities: ");
         Ability [] abilities = player.getCharacterClass().getAbilityList();
+        if(player.hasPotion()){
+            System.out.println("0. Health Potion - 50% health restore");
+        }
         for(int i = 0; i < abilityCount; i++){
             
             System.out.println((i + 1) + ". " + abilities[i].getName() + " - " + abilities[i].getDamage() + " damage.");
@@ -97,21 +114,53 @@ public class JungleRPG {
             }
         }
         System.out.print("Choose an ability: ");
-        int abilityChoice = scanner.nextInt();
-        while(abilityChoice < 1 || abilityChoice > abilityCount){
-            System.out.print("Please enter a valid ability number: ");
-            abilityChoice = scanner.nextInt();
+        String temp = scanner.nextLine();
+        while(parseIntOrNull(temp) == null){
+            System.out.print("Please enter a valid number: ");
+            temp = scanner.nextLine();
         }
+        int abilityChoice = Integer.parseInt(temp);
+        while(abilityChoice  < 0  || abilityChoice > abilityCount){
+            System.out.print("Please enter a valid ability number: ");
+            temp = scanner.nextLine();
+            while(parseIntOrNull(temp) == null){
+                System.out.print("Please enter a valid number: ");
+                temp = scanner.nextLine();
+            }
+            abilityChoice = Integer.parseInt(temp);
+        }
+        if(player.hasPotion() && abilityChoice == 0){
+            player.usePotion();
+            System.out.println("You use a health potion!");
+            System.out.println("You now have " + player.getHealth() + " health.");
+            System.out.println("---------------------------------------------");
+            scanner.nextLine();
+            return 0;
+        }
+        else if (abilityChoice > 0){
         Ability chosenAbility = abilities[abilityChoice - 1];
         int damageDealt = chosenAbility.getDamage();
         enemy.takeDamage(damageDealt);
         System.out.println("You use " + chosenAbility.getName() + "!");
         System.out.println("It deals " + damageDealt + " damage!");
         System.out.println("The enemy now has " + enemy.getHealth() + " health remaining.");
+        Random random = new Random();
+        if(chosenAbility.hasModifier() && random.nextInt()<.25){
+            System.out.println("The enemy is affected by " + chosenAbility.getName() + "!");
+           enemy.setModifier(chosenAbility.getModifier());
+        }
+        if(enemy.isAfflicted()){
+            enemy.decrementModifier();
+        }
         System.out.println("---------------------------------------------");
-
+        scanner.nextLine();
         return damageDealt;
-
+        }
+        System.out.println("You reach for a health potion, but you have none left!");
+        System.out.println("A critical mistake! The enemy will surely strike now!");
+        System.out.println("---------------------------------------------");
+        scanner.nextLine();
+        return 0;
     }
 
 
@@ -153,6 +202,7 @@ public class JungleRPG {
             player.takeDamage(damageDealt);
             System.out.println("You have " + player.getHealth() + " health remaining.");
             System.out.println("---------------------------------------------");
+            scanner.nextLine();
             }
 
         }
@@ -161,13 +211,13 @@ public class JungleRPG {
         System.out.println("You have defeated Skinless Creature!");
         System.out.println("---------------------------------------------");
         System.out.println("You have gained 10 gold and a healing potion.");
-        System.out.println("Health potions can be used to restore 25% of your health.");
-        System.out.println("You have also gained 25 experience.");
-        System.out.println("You still need 75 experience to level up.");
+        System.out.println("Health potions can be used to restore 50% of your health.");
+        System.out.println("You have also gained 75 experience.");
+        System.out.println("You still need 25 experience to level up.");
         scanner.nextLine();
         player.findGold(10);
         player.getPotion();
-        player.gainExperience(25);
+        player.gainExperience(75);
 
 
     }
@@ -216,7 +266,12 @@ public class JungleRPG {
 
         while(classChoice < 1 || classChoice > 5){
             System.out.print("Choose a class: ");
-            classChoice = scanner.nextInt();
+            String temp = scanner.nextLine();
+            while(parseIntOrNull(temp) == null){
+                System.out.print("Please enter a valid number: ");
+                temp = scanner.nextLine();
+            }
+            classChoice = Integer.parseInt(temp);
             if(classChoice < 1 || classChoice > 5){
                 System.out.println("Please enter a valid class number 1-5 ");
             }
@@ -249,10 +304,20 @@ public class JungleRPG {
             if(statsRemaining > 0){
             System.out.println("You have " + statsRemaining + " skill points remaining.");
             System.out.print("Enter points for attribute " + statNames[i] + ": ");
-            int temp = scanner.nextInt();
+            String tempString = scanner.nextLine();
+            while(parseIntOrNull(tempString) == null){
+                System.out.print("Please enter a valid number: ");
+                tempString = scanner.nextLine();
+            }
+            int temp = Integer.parseInt(tempString);
             while(temp < 0 || temp > 10){
                 System.out.print("Please enter a valid number between 0 and 10: ");
-                temp = scanner.nextInt();
+                tempString = scanner.nextLine();
+                while(parseIntOrNull(tempString) == null){
+                    System.out.print("Please enter a valid number: ");
+                    tempString = scanner.nextLine();
+                }
+                temp = Integer.parseInt(tempString);
             }
             if(temp > statsRemaining){
                 System.out.println("You do not have enough skill points to put that many in this attribute.");
@@ -308,6 +373,7 @@ public class JungleRPG {
     }
 
     public static void main(String[] args) {
+        try{
         Scanner scanner = new Scanner(System.in);
         //once level 15, it is always 5000
         final int[] EXP_TO_NEXT_LEVEL = {0,100, 200, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 5000};
@@ -368,10 +434,13 @@ public class JungleRPG {
 
         //main gameplay loop - we travel a certain distance (random roll based on luck)
         Enemy currentEnemy;
+        Random random = new Random();
         while(player.isAlive()){
            int steps =  roll(player);
            stepsWalked += steps;
            System.out.println("You walk " + steps + " steps.");
+           System.out.println("You have gained " + steps + " experience.");
+              player.gainExperience(steps);
            System.out.println("---------------------------------------------");
            scanner.nextLine();
            //fix this
@@ -384,17 +453,22 @@ public class JungleRPG {
                 while(player.isAlive() && currentEnemy.isAlive()){
                     totalDamageDealt += takeTurn(player, currentEnemy, scanner);
                     if(currentEnemy.isAlive()){
-                    System.out.println("Now it is time for the " + currentEnemy.getName() + " to attack.");
-                    Ability enemyAbility = currentEnemy.getAbility();
-                    Random random = new Random();
-                    int baseDamage = enemyAbility.getDamage();
-                    int variance = (int) (baseDamage * 0.2);
-                    int damageDealt = baseDamage + random.nextInt(2 * variance + 1) - variance;
+                        if(currentEnemy.isAfflictedBySpecial() && random.nextInt() < .2){
+                                currentEnemy.printSpecialMessage();
 
-                    System.out.println("The " + currentEnemy.getName() + " uses " + enemyAbility.getName() + "!");
-                    System.out.println("It deals " + damageDealt + " damage!");
-                    player.takeDamage(damageDealt);
-                    System.out.println("You have " + player.getHealth() + " health remaining.");
+                        }
+                        else{
+                            System.out.println("Now it is time for the " + currentEnemy.getName() + " to attack.");
+                            Ability enemyAbility = currentEnemy.getAbility();
+                            int baseDamage = enemyAbility.getDamage();
+                            int variance = (int) (baseDamage * 0.2);
+                            int damageDealt = baseDamage + random.nextInt(2 * variance + 1) - variance;
+
+                            System.out.println("The " + currentEnemy.getName() + " uses " + enemyAbility.getName() + "!");
+                            System.out.println("It deals " + damageDealt + " damage!");
+                            player.takeDamage(damageDealt);
+                            System.out.println("You have " + player.getHealth() + " health remaining.");
+                        }
                     System.out.println("---------------------------------------------");
                     scanner.nextLine();
                     }
@@ -402,16 +476,15 @@ public class JungleRPG {
 
                 if(player.isAlive()){
                     System.out.println("You have defeated the " + currentEnemy.getName() + "!");
-                    Random random = new Random();
                     int goldModifier = random.nextInt(0, 10) + 1;
                     int experienceModifier = random.nextInt(-10, 10) + 1;
                     int goldDropped = (currentEnemy.getLevel() * 3 / 2 + goldModifier ) / 2;
                     if(goldDropped < 0){
                         goldDropped += 10;
                     }
-                    int expGained = currentEnemy.getLevel() * 20 + experienceModifier;
+                    int expGained = currentEnemy.getLevel() * 30 + experienceModifier;
                     if(expGained <= 0 ){
-                        expGained += 10;
+                        expGained += 25;
                     }
                     player.gainExperience(expGained);
                     int expNeeded;
@@ -435,7 +508,12 @@ public class JungleRPG {
                             System.out.println("3. Intellect");
                             System.out.println("4. Luck");
                             System.out.print("Choose a skill: ");
-                            skillChoice = scanner.nextInt();
+                            String temp =  scanner.nextLine();
+                            while(parseIntOrNull(temp) == null){
+                                System.out.print("Please enter a valid number: ");
+                                temp = scanner.nextLine();
+                            }
+                            skillChoice = Integer.parseInt(temp);
                             if(skillChoice < 1 || skillChoice > 4){
                                 System.out.println("Please enter a valid skill number 1-4.");
                             }
@@ -450,8 +528,23 @@ public class JungleRPG {
                         System.out.println("Intellect: " + player.getIntellect());
                         System.out.println("Luck: " + player.getLuck());
 
-                        if(player.getLevel() == 5 || player.getLevel() == 10 || player.getLevel() == 15 || player.getLevel() == 20 || player.getLevel() == 30){
+                        if(player.getLevel() == 2 || player.getLevel() == 5 || player.getLevel() == 10 || player.getLevel() == 20){
                             System.out.println("You have unlocked a new ability!");
+                            switch(player.getLevel()){
+                                case 2:
+                                    System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[1].getName() + "!");
+                                    break;
+                                case 5:
+                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[2].getName() + "!");
+                                    break;
+                                case 10:
+                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[3].getName() + "!");
+                                    break;
+                                case 20:
+                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[4].getName() + "!");
+                                    break;
+                            }
+                            
                         }
                     }
                     System.out.println("---------------------------------------------");
@@ -482,5 +575,8 @@ public class JungleRPG {
 
         scanner.close();
 
+    } catch(Exception e){
+        System.out.println("An error occurred. Exiting game ...");
     }
-}
+    }
+}   
