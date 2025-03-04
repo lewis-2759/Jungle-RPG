@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -360,6 +362,8 @@ public class JungleRPG {
 
     public static void main(String[] args) {
         try(Scanner scanner = new Scanner(System.in)){
+
+        List <String> defeatedEnemies = new ArrayList<>();
         //once level 15, it is always 5000
         final int[] EXP_TO_NEXT_LEVEL = {0,100, 200, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 5000};
         final int MAX_EXP_15 = 5000;
@@ -466,6 +470,7 @@ public class JungleRPG {
 
                 if(player.isAlive()){
                     System.out.println("You have defeated the " + currentEnemy.getName() + "!");
+                    defeatedEnemies.add(currentEnemy.getName());
                     int goldModifier = random.nextInt(0, 10) + 1;
                     int experienceModifier = random.nextInt(-10, 10) + 1;
                     int goldDropped = (currentEnemy.getLevel() * 3 / 2 + goldModifier ) / 2;
@@ -544,6 +549,12 @@ public class JungleRPG {
         System.out.println("You have died in the jungle, as all eventually do.");
         System.out.println("---------------------------------------------");
         scanner.nextLine();
+        System.out.println("You have defeated " + defeatedEnemies.size() + " enemies: ");
+        System.out.println("Some of the highlights of enemies defeated are: ");
+        for(int i =0; i< defeatedEnemies.size(); i+=5){
+            System.out.println(defeatedEnemies.get(i));
+        }
+        System.out.println("---------------------------------------------");
         System.out.println("You walked " + stepsWalked + " steps.");
         if(enemiesKilled == 1){
             System.out.println("You killed " + enemiesKilled + " enemy.");
