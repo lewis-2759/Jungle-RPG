@@ -17,7 +17,7 @@ public class Character {
 
     public Character(String name, GameClass characterClassChosen, int stats[]) {
         this.name = name;
-        this.health = 30; //default health is 100
+        this.health = 30;
         this.maxHealth = 30;
 
         this.strength = stats[0];
@@ -49,6 +49,9 @@ public class Character {
 
     public void setHealth(int health){
         this.health = health;
+        if(this.health > this.maxHealth){
+            this.health = this.maxHealth;
+        }
     }
 
     public int getMaxHealth() {
@@ -124,21 +127,12 @@ public class Character {
         this.experience = 0;
         this.maxHealth += 10;
         this.health = this.maxHealth;
-        switch(skillChoice){
-            case 0:
-                this.strength += 1;
-                break;
-            case 1:
-                this.dexterity += 1;
-                break;
-            case 2:
-                this.intellect += 1;
-                break;
-            case 3:
-                this.luck += 1;
-                break;
-            default:
-                System.out.println("Invalid skill choice"); //this should never happen
+        switch (skillChoice) {
+            case 0 -> this.strength += 1;
+            case 1 -> this.dexterity += 1;
+            case 2 -> this.intellect += 1;
+            case 3 -> this.luck += 1;
+            default -> System.out.println("Invalid skill choice"); // this should never happen
         }
     }
 }

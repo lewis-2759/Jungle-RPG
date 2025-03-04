@@ -5,7 +5,7 @@ public class JungleRPG {
 
     public static Integer parseIntOrNull(String value) {
         try {
-            return Integer.parseInt(value);
+            return (int) Integer.parseInt(value);
         } catch (NumberFormatException e) {
             return null;
         }
@@ -234,9 +234,7 @@ public class JungleRPG {
     }
 
 
-    public static Character createCharacter() {
-
-         Scanner scanner = new Scanner(System.in);
+    public static Character createCharacter(Scanner scanner) {
          String confirm = "n";
          String name = "";
          int classChoice = 0;
@@ -347,39 +345,24 @@ public class JungleRPG {
 
         System.out.println("---------------------------------------------");
         GameClass classChosen;
-        switch(classChoice) {
-            case 1:
-                classChosen = new Warrior();
-                break;
-            case 2:
-                classChosen = new Mage();
-                break;
-            case 3:
-                classChosen = new Rogue();
-                break;
-            case 4:
-                classChosen = new Warlock();
-                break;
-            case 5:
-                classChosen = new Archer();
-                break;
-            default:
-            //default to warrior, this should never happen
-                classChosen = new Warrior();
-                break;
+        switch (classChoice) {
+            case 1 -> classChosen = new Warrior();
+            case 2 -> classChosen = new Mage();
+            case 3 -> classChosen = new Rogue();
+            case 4 -> classChosen = new Warlock();
+            case 5 -> classChosen = new Archer();
+            default -> classChosen = new Warrior(); // default to warrior, this should never happen
         }
+
         Character player =  new Character(name, classChosen, stats);
         return player;
     }
 
     public static void main(String[] args) {
-        try{
-        Scanner scanner = new Scanner(System.in);
+        try(Scanner scanner = new Scanner(System.in)){
         //once level 15, it is always 5000
         final int[] EXP_TO_NEXT_LEVEL = {0,100, 200, 300, 400, 500, 750, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 5000};
         final int MAX_EXP_15 = 5000;
-
-        final String [] modifierNames = {"No Modifier", "Slow", "Stun", "Freeze", "Burn", "Bleed", "Poison", "Trap", "Slow", "Fear", "Curse"};
 
         final Ability [] enemyAbilities = {new Ability("Bite", 9, 0), new Ability("Claw", 8, 5), new Ability("Intimidate", 9, 0), new Ability("Maul", 7, 1), new Ability("Roar", 8, 9), new Ability("Swipe", 7, 0), new Ability("Tear", 9, 0), new Ability("Thrash", 10, 2)};
         final String [] enemyNames = {"Jungle Rat", "Giant Spider", "Wild Boar", "Giant Snake", "Jungle Bear", "Jungle Panther", "Jungle Tiger", "Massive Gorilla", "Cannibal", "Rogue Wizard", "Jungle Demon", "Jungle Dragon"};
@@ -395,8 +378,7 @@ public class JungleRPG {
         System.out.println("---------------------------------------------");
         scanner.nextLine();
 
-        Character player = createCharacter();
-
+        Character player = createCharacter(scanner);
         outputIntro();
         scanner.nextLine();
 
@@ -441,6 +423,15 @@ public class JungleRPG {
            System.out.println("You walk " + steps + " steps.");
            System.out.println("You have gained " + steps + " experience.");
               player.gainExperience(steps);
+              int healthCanBeGained = player.getMaxHealth() - player.getHealth();
+              if(healthCanBeGained > 0 && steps < healthCanBeGained){
+                System.out.println("The time travelling allowed you to heal for " + steps + " health.");
+                player.setHealth(player.getHealth() + steps);
+              }
+              else if (healthCanBeGained > 0){
+                System.out.println("The time travelling allowed you to heal for " + healthCanBeGained + " health.");
+                player.setHealth(player.getHealth() + healthCanBeGained);
+              }
            System.out.println("---------------------------------------------");
            scanner.nextLine();
            //fix this
@@ -529,19 +520,11 @@ public class JungleRPG {
 
                         if(player.getLevel() == 2 || player.getLevel() == 5 || player.getLevel() == 10 || player.getLevel() == 20){
                             System.out.println("You have unlocked a new ability!");
-                            switch(player.getLevel()){
-                                case 2:
-                                    System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[1].getName() + "!");
-                                    break;
-                                case 5:
-                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[2].getName() + "!");
-                                    break;
-                                case 10:
-                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[3].getName() + "!");
-                                    break;
-                                case 20:
-                                System.out.println("You have unlocked the ability "+ player.getCharacterClass().getAbilityList()[4].getName() + "!");
-                                    break;
+                            switch (player.getLevel()) {
+                                case 2 -> System.out.println("You have unlocked the ability " + player.getCharacterClass().getAbilityList()[1].getName() + "!");
+                                case 5 -> System.out.println("You have unlocked the ability " + player.getCharacterClass().getAbilityList()[2].getName() + "!");
+                                case 10 -> System.out.println("You have unlocked the ability " + player.getCharacterClass().getAbilityList()[3].getName() + "!");
+                                case 20 -> System.out.println("You have unlocked the ability " + player.getCharacterClass().getAbilityList()[4].getName() + "!");
                             }
                             
                         }
