@@ -12,7 +12,6 @@
   - [Items and Systems](#items-and-systems)
   - [Attributes](#attributes)
 
-
 ## Introduction
 
 Welcome to JungleRPG! This is a text-based role-playing game where you must survive as long as you can against generated enemies. Choose your class, gather items, and test your survival skills in this never-ending challenge.

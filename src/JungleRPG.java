@@ -84,7 +84,7 @@ public class JungleRPG {
             System.out.println("The enemy is affected for " + enemy.getModifierTurns() + " more turns.");
         }
         int level = player.getLevel();
-        int abilityCount = 1;
+        int abilityCount;
         if(level >= 20){
             abilityCount = 5;
         }
@@ -145,17 +145,18 @@ public class JungleRPG {
         System.out.println("It deals " + damageDealt + " damage!");
         System.out.println("The enemy now has " + enemy.getHealth() + " health remaining.");
         Random random = new Random();
-        if(chosenAbility.hasModifier() && random.nextInt()<.25){
+        if(enemy.isAlive() && chosenAbility.hasModifier() && random.nextInt()<.25){
             System.out.println("The enemy is affected by " + chosenAbility.getName() + "!");
            enemy.setModifier(chosenAbility.getModifier());
         }
-        if(enemy.isAfflicted()){
+        if(enemy.isAlive() && enemy.isAfflicted()){
             enemy.decrementModifier();
         }
         System.out.println("---------------------------------------------");
         scanner.nextLine();
         return damageDealt;
         }
+        //if we reach here, we chose health potion but have none
         System.out.println("You reach for a health potion, but you have none left!");
         System.out.println("A critical mistake! The enemy will surely strike now!");
         System.out.println("---------------------------------------------");
@@ -234,7 +235,6 @@ public class JungleRPG {
 
 
     public static Character createCharacter() {
-        //ADD INPUT VALIDATION FOR INT PARSING 
 
          Scanner scanner = new Scanner(System.in);
          String confirm = "n";
@@ -455,7 +455,6 @@ public class JungleRPG {
                     if(currentEnemy.isAlive()){
                         if(currentEnemy.isAfflictedBySpecial() && random.nextInt() < .2){
                                 currentEnemy.printSpecialMessage();
-
                         }
                         else{
                             System.out.println("Now it is time for the " + currentEnemy.getName() + " to attack.");

@@ -1,20 +1,19 @@
 public class Enemy {
-    private Ability one;
-    private Ability two;
-    private String name;
+    final private Ability one;
+    final private Ability two;
+    final private String name;
     private int health;
-    private int maxHealth;
-    private int level;
+    final private int level;
     private int modifierRemaining;
     private boolean hasModifierCurrent;
     private int modifier;
+
 
     public Enemy(String name, Ability one, Ability two, int health, int level) {
         this.name = name;
         this.one = one;
         this.two = two;
         this.health = health;
-        this.maxHealth = health;
         this.level = level;
     }
 
@@ -67,6 +66,7 @@ public class Enemy {
             case 1:
                 //slow
                 System.out.println("The enemy is slowed!");
+
                 break;
             case 2:
                 //stun
@@ -100,12 +100,10 @@ public class Enemy {
             case 7:
                 //trap
                 System.out.println("The enemy is trapped!");
-
                 break;
             case 8:
                 //slow
                 System.out.println("The enemy is slowed!");
-
                 break;
             case 9:
                 //fear
@@ -124,6 +122,7 @@ public class Enemy {
         }
         this.modifierRemaining--;
         if(this.modifierRemaining == 0){
+            System.out.print("The enemy is no longer afficted by " + this.getModifier() + "!");
             this.hasModifierCurrent = false;
         }
     }
@@ -137,6 +136,7 @@ public class Enemy {
     public int getModifierNum(){
         return this.modifier;
     }
+
     public String getModifier(){
        switch (this.modifier){
         case 0:
@@ -180,7 +180,6 @@ public class Enemy {
     public int getHealth() {
         return this.health;
     }
-
     public int getMaxHealth() {
         return this.health;
     }
